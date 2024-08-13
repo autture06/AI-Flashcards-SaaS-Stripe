@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Container, Typography, Button, Box, Grid, AppBar, Toolbar } from '@mui/material';
 import Head from 'next/head';
-import { SignIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 export default function Home() {
   return (
@@ -21,9 +21,9 @@ export default function Home() {
             <Button color='inherit'>Login</Button>
             <Button color='inherit'>Sign Up</Button>
           </SignedOut>
-          <SignIn>
+          <SignedIn>
             <UserButton />
-          </SignIn>
+          </SignedIn>
         </Toolbar>
       </AppBar>
       <Box 
