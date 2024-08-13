@@ -10,7 +10,7 @@ export default function SignUpPage() {
                 <Toolbar>
                     <Typography variant='h6' style={{ flexGrow: 1 }}>Flashcard SaaS</Typography>
                     <Link href="/" passHref>
-                        <Button color="inherit"><CloseIcon /></Button>
+                        <Button sx={{color:'white'}}><CloseIcon /></Button>
                     </Link>
                 </Toolbar>
             </AppBar> 
@@ -21,11 +21,8 @@ export default function SignUpPage() {
                 justifyContent='center'
                 sx={{ my: 4 }}
             >
-                <Typography variant="h4">Sign In</Typography>
+                <Typography variant="h4">Sign Up</Typography>
                 <SignUp />
-                <Link href="/sign-in" passHref>
-                    <Button color="inherit">Already have an account? Login</Button>
-                </Link>
             </Box>
         </Container>
     );

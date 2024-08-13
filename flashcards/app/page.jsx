@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Container, Typography, Button, Box, Grid, AppBar, Toolbar } from '@mui/material';
 import Head from 'next/head';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
@@ -18,8 +19,12 @@ export default function Home() {
         <Toolbar>
           <Typography variant='h6' style={{ flexGrow: 1 }}>Flashcard SaaS</Typography>
           <SignedOut>
-            <Button color='inherit'>Login</Button>
-            <Button color='inherit'>Sign Up</Button>
+            <Link href="/sign-in" passHref>
+              <Button sx={{color:'white'}}>Login</Button>
+            </Link>
+            <Link href="/sign-up" passHref>
+              <Button sx={{color:'white'}}>Sign Up</Button>
+            </Link>
           </SignedOut>
           <SignedIn>
             <UserButton />
