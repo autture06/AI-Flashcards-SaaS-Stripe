@@ -141,8 +141,8 @@ const Home = () => {
           <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
             FlashMaster
           </Typography>
-          <Button color="inherit">Login</Button>
-          <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
+          <Button color="inherit" href="/sign-in">Login</Button>
+          <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }} href="/sign-up">
             Sign Up
           </Button>
         </Toolbar>
