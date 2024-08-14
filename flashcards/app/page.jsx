@@ -145,10 +145,17 @@ const Home = () => {
           </Typography>
           <SignedOut>
             <Link href="/sign-in" passHref>
-              <Button sx={{color:'white'}}>Login</Button>
+              <Button sx={{ color: 'white' }}>
+                Login
+              </Button>
             </Link>
             <Link href="/sign-up" passHref>
-              <Button sx={{color:'white'}}>Sign Up</Button>
+              <Button 
+                variant="outlined" 
+                sx={{ ml: 2, color: 'white', borderColor: 'white' }}
+              >
+                Sign Up
+              </Button>
             </Link>
           </SignedOut>
           <SignedIn>
@@ -156,6 +163,8 @@ const Home = () => {
           </SignedIn>
         </Toolbar>
       </AppBar>
+
+
 
       {/* Hero Section */}
       <Box
