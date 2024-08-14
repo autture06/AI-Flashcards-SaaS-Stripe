@@ -132,16 +132,17 @@ const Home = () => {
   );  
   */}
 
+  
   return (
     <div>
       {/* Navbar */}
-      <AppBar position="static" color="transparent" elevation={0}>
+      <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
             FlashMaster
           </Typography>
           <Button color="inherit">Login</Button>
-          <Button variant="outlined" sx={{ ml: 2 }}>
+          <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
             Sign Up
           </Button>
         </Toolbar>
@@ -177,7 +178,7 @@ const Home = () => {
       </Box>
 
       {/* Features Section */}
-      <Container sx={{ mt: 10 }}>
+      <Container sx={{ mt: 10}}>
         <Typography variant="h4" align="center" gutterBottom>
           Why Choose FlashMaster?
         </Typography>
