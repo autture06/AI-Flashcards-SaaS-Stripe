@@ -2,6 +2,8 @@ import Image from "next/image";
 import * as React from "react";
 import Head from "next/head";
 import { AppBar, Toolbar, Typography, Button, Container, Box, Grid, Card, CardContent, CardActions } from '@mui/material';
+import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
+import Link from 'next/link';
 
 const Home = () => {
   {/*
@@ -141,10 +143,17 @@ const Home = () => {
           <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
             FlashMaster
           </Typography>
-          <Button color="inherit" href="/sign-in">Login</Button>
-          <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }} href="/sign-up">
-            Sign Up
-          </Button>
+          <SignedOut>
+            <Link href="/sign-in" passHref>
+              <Button sx={{color:'white'}}>Login</Button>
+            </Link>
+            <Link href="/sign-up" passHref>
+              <Button sx={{color:'white'}}>Sign Up</Button>
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </Toolbar>
       </AppBar>
 
