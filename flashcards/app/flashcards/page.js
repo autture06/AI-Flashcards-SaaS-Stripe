@@ -1,15 +1,20 @@
 'use client'
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
-import { collection, doc, getDocs } from "firebase/firestore"
+import { collection, doc, getDoc, setDoc } from "firebase/firestore"
+import db from "@/firebase"
 
 export default function Flashcards() {
     const {isLoaded, isSignedIn, user} = useUser()
     const [flashcards, setFlashcards] = useState([])
     useEffect(() => {
         async function getFlashcards() {
+            if (user === undefined) {
+                return
+            }
             //Check to see if document exists
-            const docRef = doc(collection(firestore, 'users'), user.id)
+            const docRef = doc(collection(db, 'users'), user.id)
+            const docSnap = await getDoc(docRef)
             if(docSnap.exists()) {
                 //Get all collection names
                 const collections = await getDocs(docRef)
