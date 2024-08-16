@@ -1,7 +1,7 @@
 'use client'
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
-import { collection, doc, getDoc, setDoc } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore"
 import db from "@/firebase"
 
 export default function Flashcards() {
