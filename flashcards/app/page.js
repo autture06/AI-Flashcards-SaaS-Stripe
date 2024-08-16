@@ -134,7 +134,7 @@ const Home = () => {
   );  
   */}
 
-  
+ 
   return (
     <div>
       {/* Navbar */}
@@ -150,10 +150,7 @@ const Home = () => {
               </Button>
             </Link>
             <Link href="/sign-up" passHref>
-              <Button 
-                variant="outlined" 
-                sx={{ ml: 2, color: 'white', borderColor: 'white' }}
-              >
+              <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
                 Sign Up
               </Button>
             </Link>
