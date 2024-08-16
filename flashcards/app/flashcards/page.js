@@ -9,7 +9,7 @@ export default function Flashcards() {
         return null
     }
 
-    console.log(user.id)
+    console.log(user.id) 
 
     return <></>
 }
