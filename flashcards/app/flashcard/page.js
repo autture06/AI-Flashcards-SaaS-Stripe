@@ -4,12 +4,14 @@ import { useEffect, useState } from "react"
 import { collection, doc, getDocs } from "firebase/firestore"
 import db from "../../firebase"
 import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box } from '@mui/material'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Flashcard() {
     const { isLoaded, isSignedIn, user } = useUser()
     const [flashcards, setFlashcards] = useState([])
     const [flipped, setFlipped] = useState({})
+    const [name, setName] = useState('')
+    const router = useRouter()
 
     // Get query parameter
     const searchParams = useSearchParams()
@@ -36,6 +38,11 @@ export default function Flashcard() {
             [id]: !prev[id],
         }))
     }
+
+    const saveFlashcard = async () => {
+        //Check to see if name exists in db
+        const docRef = doc(collection(db, 'users'), user.id)
+    }   
 
     if (!isLoaded || !isSignedIn) {
         return null
