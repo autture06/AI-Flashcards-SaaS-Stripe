@@ -35,6 +35,7 @@ import Link from 'next/link';
 import { SignIn } from '@clerk/nextjs';
 import { Button, Container, AppBar, Toolbar, Typography, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import React from 'react'
 
 export default function SignInPage() {
   return (
@@ -61,8 +62,15 @@ export default function SignInPage() {
             <Button sx={{ color: 'white' }}>
               <CloseIcon />
             </Button>
+
           </Link>
-        </Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>          </Typography>
+            <Button color="inherit">
+              <Link href="/login" passHref>
+                Login
+              </Link>
+            </Button>
+          </Toolbar>
       </AppBar>
 
       {/* Sign In Form */}
