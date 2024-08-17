@@ -19,7 +19,7 @@ export default function Flashcard() {
         async function getFlashcard() {
             if (!search || !user) return
 
-            const colRef = collection(doc(collection(db, 'users'), user.id), search)
+            const colRef = doc(collection(db, 'users', user.id, 'flashcards'), search)
             const docs = await getDocs(colRef)
             const flashcards = []
             docs.forEach((doc) => {
