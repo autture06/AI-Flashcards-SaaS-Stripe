@@ -40,49 +40,40 @@ export default function Generate() {
     }
 
     const saveFlashcards = async () => {
-        if (!name) return
+        if (!name) {
+            alert('Please enter a name for the flashcard collection')
+            return
+        }
 
         // Begin Firestore batch write
         const batch = writeBatch(db)
-
-        // Check if flashcard collection exists in user document
-        const docRef = doc(db, 'users', user.id)
-        const docSnap = await getDoc(docRef)
+        const userDocRef = doc(collection(db, 'users'), user.id)
+        const docSnap = await getDoc(userDocRef)
+        
 
         if (docSnap.exists()) {
-            const existingCollections = docSnap.data().flashcards || []
-            if (existingCollections.find((f) => f.name === name)) {
+            const collections = docSnap.data().flashcards || []
+            if (collections.find((f) => f.name === name)) {
                 alert('A flashcard collection with this name already exists!')
                 return
             }
-
-            // Add flashcard collection to user document
-            const updatedCollections = [...existingCollections, { name }]
-            batch.update(docRef, { flashcards: updatedCollections })
-
-            // Save each flashcard as a document in a new collection inside the user's document
-            const flashcardCollectionRef = collection(docRef, name)
-            flashcards.forEach((flashcard, index) => {
-                const flashcardRef = doc(flashcardCollectionRef, `flashcard_${index}`)
-                batch.set(flashcardRef, flashcard)
-            })
-        } else {
-            // Create new document for the user and add the flashcard collection
-            batch.set(docRef, { flashcards: [{ name }] })
-
-            // Save each flashcard as a document in a new collection
-            const flashcardCollectionRef = collection(docRef, name)
-            flashcards.forEach((flashcard, index) => {
-                const flashcardRef = doc(flashcardCollectionRef, `flashcard_${index}`)
-                batch.set(flashcardRef, flashcard)
-            })
+            else {
+                collections.push({name})
+                batch.set(userDocRef, {flashcards: collections}, {merge: true})
+            }
         }
-
-        // Commit the batch
+        else {
+            batch.set(userDocRef, {flashcards: [{name}]})
+        }
+        const colRef = collection(userDocRef, name)
+        flashcards.forEach((flashcard) => {
+            const cardDocRef = doc(colRef)
+            batch.set(cardDocRef, flashcard)
+        })
         await batch.commit()
-
         handleClose()
         router.push('/flashcards')
+        
     }
 
     return (
