@@ -21,7 +21,7 @@ export default function Flashcard() {
 
             if(docSnap.exists()) {
                 //Get all collection names from doc
-                const collections = docSnap.data().flashcards || [];
+                const collections = docSnap.data().flashcards
                 setFlashcards(collections);
             }
             else {
@@ -49,7 +49,7 @@ export default function Flashcard() {
                             <CardActionArea onClick={() => handleCardClick(flashcard)} sx={{cursor: 'pointer'}}>
                                 <CardContent>
                                     <Typography variant="h5" component="div">
-                                        {flashcard}
+                                        {flashcard.name}
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
