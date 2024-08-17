@@ -42,6 +42,10 @@ export default function Flashcard() {
     const saveFlashcard = async () => {
         //Check to see if name exists in db
         const docRef = doc(collection(db, 'users'), user.id)
+        const flashcardRef = collection(docRef, name) 
+
+        //Check if flashcardRef exists
+        const docSnap = await getDoc(flashcardRef)
     }   
 
     if (!isLoaded || !isSignedIn) {
