@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import OpenAI from 'openai';
+
+// Initialize OpenAI with API Key from environment variables
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY, // Make sure to set this in your environment variables
+});
 
 const systemPrompt = `
 You are a specialized language model designed to create educational flashcards from a given body of text. Your task is to extract key concepts, definitions, terms, or questions and generate concise, informative flashcards. Follow these guidelines to ensure the flashcards are effective:
@@ -13,6 +18,8 @@ Clarity and Brevity: Keep the questions and answers brief and to the point. Avoi
 Categorization: If applicable, categorize the flashcards into relevant topics or sections to aid in better organization and learning.
 
 Examples and Explanations: When necessary, provide examples or brief explanations to clarify complex concepts, but ensure they are succinct.
+
+Keep the answers one sentence long.
 
 Example Flashcards:
 
@@ -35,27 +42,40 @@ Return in the following JSON format:
 
 export async function POST(req) {
     try {
-      const openai = new OpenAI();
-      const data = await req.text();
+        // Get the request data as text
+        const data = await req.text();
 
-      const completion = await openai.chat.completion.create({
-        messages: [
-            {role: 'system', content: 'systemPrompt'},
-            {role: 'user', content: data},
-        ],
-        model: "gpt-3.5-turbo",
-        response_format:{type: 'json_object'}
-      });
+        // Call the OpenAI API
+        const completion = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: data },
+            ],
+        });
 
-      const flashcards = JSON.parse(completion.choices[0].message.content);
-  
-      return NextResponse.json(flashcards.flashcard);
+        // Log the API response for debugging
+        console.log('OpenAI response:', completion);
+
+        // Parse and validate the response
+        const responseText = completion.choices[0].message.content;
+        const flashcards = JSON.parse(responseText);
+
+        // Return the flashcards as JSON response
+        return NextResponse.json(flashcards);
     } catch (error) {
-      console.error('General error:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: error.status ?? 500, headers: { 'Content-Type': 'application/json' } }
-      );
+        // Log detailed error information for debugging
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            statusCode: error.response?.status,
+            responseData: error.response?.data,
+        });
+
+        // Return a 500 error response with the error message
+        return new Response(
+            JSON.stringify({ error: error.message }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
     }
-  }
-  
+}

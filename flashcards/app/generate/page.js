@@ -21,15 +21,25 @@ export default function Generate() {
     const handleSubmit = async () => {
         if (!user) return 
 
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            body: JSON.stringify({ text }), // Sending text as JSON
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        const data = await response.json()
-        setFlashcards(data)
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                body: JSON.stringify({ text }), // Sending text as JSON
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json()
+            console.log('Generated flashcards:', data) // Log the flashcards to the console
+            setFlashcards(data.flashcards || [])
+        } catch (error) {
+            console.error('Error fetching flashcards:', error)
+        }
     }
 
     const handleCardClick = (id) => {
@@ -234,5 +244,3 @@ export default function Generate() {
         </Container>
     )
 }
-
-
