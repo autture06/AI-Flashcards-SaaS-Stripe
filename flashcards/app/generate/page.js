@@ -1,13 +1,22 @@
 'use client'
 import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
-import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box, TextField, Paper, Button } from '@mui/material'
+import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box, TextField, Paper, Button, Modal, Fade, Backdrop } from '@mui/material'
+import { useRouter } from "next/navigation"
+import { getDoc, setDoc, collection, doc, writeBatch } from 'firebase/firestore'
+import db from "../../firebase" // Assuming the correct path for firebase config
 
 export default function Generate() {
     const { isLoaded, isSignedIn, user } = useUser()
     const [flashcards, setFlashcards] = useState([])
     const [flipped, setFlipped] = useState({})
     const [text, setText] = useState('')
+    const [name, setName] = useState('')
+    const [open, setOpen] = useState(false)
+    const router = useRouter()
+
+    const handleOpen = () => setOpen(true)
+    const handleClose = () => setOpen(false)
 
     const handleSubmit = async () => {
         if (!user) return 
@@ -28,6 +37,52 @@ export default function Generate() {
             ...prev,
             [id]: !prev[id],
         }))
+    }
+
+    const saveFlashcards = async () => {
+        if (!name) return
+
+        // Begin Firestore batch write
+        const batch = writeBatch(db)
+
+        // Check if flashcard collection exists in user document
+        const docRef = doc(db, 'users', user.id)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+            const existingCollections = docSnap.data().flashcards || []
+            if (existingCollections.find((f) => f.name === name)) {
+                alert('A flashcard collection with this name already exists!')
+                return
+            }
+
+            // Add flashcard collection to user document
+            const updatedCollections = [...existingCollections, { name }]
+            batch.update(docRef, { flashcards: updatedCollections })
+
+            // Save each flashcard as a document in a new collection inside the user's document
+            const flashcardCollectionRef = collection(docRef, name)
+            flashcards.forEach((flashcard, index) => {
+                const flashcardRef = doc(flashcardCollectionRef, `flashcard_${index}`)
+                batch.set(flashcardRef, flashcard)
+            })
+        } else {
+            // Create new document for the user and add the flashcard collection
+            batch.set(docRef, { flashcards: [{ name }] })
+
+            // Save each flashcard as a document in a new collection
+            const flashcardCollectionRef = collection(docRef, name)
+            flashcards.forEach((flashcard, index) => {
+                const flashcardRef = doc(flashcardCollectionRef, `flashcard_${index}`)
+                batch.set(flashcardRef, flashcard)
+            })
+        }
+
+        // Commit the batch
+        await batch.commit()
+
+        handleClose()
+        router.push('/flashcards')
     }
 
     return (
@@ -126,9 +181,67 @@ export default function Generate() {
                             </Grid>
                         ))}
                     </Grid>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleOpen}
+                        sx={{ mt: 3 }}
+                        fullWidth
+                    >
+                        Add to Firebase
+                    </Button>
                 </Box>
             )}
+
+            {/* Modal for Saving Flashcards */}
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={open}>
+                    <Box 
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                        }}
+                    >
+                        <Typography variant="h6" component="h2" gutterBottom>
+                            Save Flashcards to Firebase
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            label="Enter collection name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            sx={{ mb: 2 }}
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={saveFlashcards}
+                            fullWidth
+                        >
+                            Save
+                        </Button>
+                    </Box>
+                </Fade>
+            </Modal>
         </Container>
     )
 }
+
 
