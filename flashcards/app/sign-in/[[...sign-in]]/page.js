@@ -33,7 +33,7 @@ export default function SignUpPage() {
 
 import Link from 'next/link';
 import { SignIn } from '@clerk/nextjs';
-import { Button, Container, AppBar, Toolbar, Typography, Box } from '@mui/material';
+import { Button, Container, AppBar, Toolbar, Typography, Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react'
 
@@ -49,7 +49,7 @@ export default function SignInPage() {
         backgroundColor: '#f5f5f5',
       }}
     >
-      {/* AppBar with Close Button */}
+      {/* AppBar without the Login button */}
       <AppBar 
         position="fixed" 
         sx={{ bgcolor: 'primary.main', top: 0, left: 0, width: '100%' }}
@@ -58,19 +58,16 @@ export default function SignInPage() {
           <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
             FlashMaster
           </Typography>
-          <Link href="/" passHref>
-            <Button sx={{ color: 'white' }}>
-              <CloseIcon />
-            </Button>
-
-          </Link>
-          <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}></Typography>
-            <Button color="inherit">
-              <Link href="/login" passHref>
-                Login
-              </Link>
-            </Button>
-          </Toolbar>
+          
+          {/* Close Button on the top right corner */}
+          <Box sx={{ position: 'absolute', right: 16 }}>
+            <Link href="/" passHref>
+              <IconButton sx={{ color: 'white' }}>
+                <CloseIcon />
+              </IconButton>
+            </Link>
+          </Box>
+        </Toolbar>
       </AppBar>
 
       {/* Sign In Form */}
