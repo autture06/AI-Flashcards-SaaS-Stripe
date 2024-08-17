@@ -10,7 +10,7 @@ const amountForStripe = (amount) => {
 export async function POST(req) {
     try {
         const params = {
-            submit_type: 'subscription',
+            mode: 'subscription',
             payment_method_types: ['card'],
             line_items: [
             {
