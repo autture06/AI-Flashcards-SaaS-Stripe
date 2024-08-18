@@ -1,10 +1,12 @@
 'use client'
 import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
-import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box, TextField, Paper, Button, Modal, Fade, Backdrop } from '@mui/material'
+import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box, TextField, Paper, Button, Modal, Fade, Backdrop, AppBar, Toolbar } from '@mui/material'
 import { useRouter } from "next/navigation"
 import { getDoc, setDoc, collection, doc, writeBatch } from 'firebase/firestore'
 import db from "../../firebase" // Assuming the correct path for firebase config
+import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
+import Link from 'next/link';
 
 export default function Generate() {
     const { isLoaded, isSignedIn, user } = useUser()
@@ -87,160 +89,186 @@ export default function Generate() {
     }
 
     return (
-        <Container maxWidth="md">
-            {/* Input Section */}
-            <Box
-                sx={{
-                    mt: 4,
-                    mb: 6,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Generate Flashcards
+        <div>
+            {/* Navbar */}
+            <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
+                <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
+                    FlashMaster
                 </Typography>
-                <Paper sx={{ p: 4, width: '100%' }}>
-                    <TextField 
-                        value={text} 
-                        onChange={(e) => setText(e.target.value)} 
-                        label="Enter text" 
-                        fullWidth 
-                        multiline 
-                        rows={4} 
-                        variant="outlined" 
-                        sx={{ mb: 2 }}
-                    />
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
-                        onClick={handleSubmit} 
-                        fullWidth
-                    >
-                        Submit
+                <SignedOut>
+                    <Link href="/sign-in" passHref>
+                    <Button sx={{ color: 'white' }}>
+                        Login
                     </Button>
-                </Paper>
-            </Box>
+                    </Link>
+                    <Link href="/sign-up" passHref>
+                    <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
+                        Sign Up
+                    </Button>
+                    </Link>
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
+                </Toolbar>
+            </AppBar>
 
-            {/* Flashcards Preview Section */}
-            {flashcards.length > 0 && (
-                <Box sx={{ mt: 4 }}>
-                    <Typography variant="h5" component="h2" gutterBottom>
-                        Flashcards Review
+            <Container maxWidth="md">
+                {/* Input Section */}
+                <Box
+                    sx={{
+                        mt: 4,
+                        mb: 6,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Generate Flashcards
                     </Typography>
-                    <Grid container spacing={3}>
-                        {flashcards.map((flashcard, index) => (
-                            <Grid item xs={12} sm={6} md={4} key={index}>
-                                <Card>
-                                    <CardActionArea onClick={() => handleCardClick(index)}>
-                                        <CardContent>
-                                            <Box 
-                                                sx={{
-                                                    perspective: '1000px',
-                                                    '& > div': {
-                                                        transition: 'transform 0.6s',
-                                                        transformStyle: 'preserve-3d',
-                                                        position: 'relative',
-                                                        width: '100%',
-                                                        height: '200px',
-                                                        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-                                                        transform: flipped[index] ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                                                    },
-                                                    '& > div > div': {
-                                                        position: 'absolute',
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        backfaceVisibility: 'hidden',
-                                                        display: 'flex',
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        padding: 2,
-                                                        boxSizing: 'border-box'
-                                                    },
-                                                    '& > div > div:nth-of-type(2)': {
-                                                        transform: 'rotateY(180deg)',
-                                                    },
-                                                }}
-                                            >
-                                                <div>
-                                                    <div>
-                                                        <Typography variant="h5" component="div">
-                                                            {flashcard.front}
-                                                        </Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography variant="h5" component="div">
-                                                            {flashcard.back}
-                                                        </Typography>
-                                                    </div>
-                                                </div>
-                                            </Box>
-                                        </CardContent>
-                                    </CardActionArea>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleOpen}
-                        sx={{ mt: 3 }}
-                        fullWidth
-                    >
-                        Add to Firebase
-                    </Button>
-                </Box>
-            )}
-
-            {/* Modal for Saving Flashcards */}
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={open}
-                onClose={handleClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
-                <Fade in={open}>
-                    <Box 
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 400,
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 4,
-                            borderRadius: 2,
-                        }}
-                    >
-                        <Typography variant="h6" component="h2" gutterBottom>
-                            Save Flashcards to Firebase
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            label="Enter collection name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                    <Paper sx={{ p: 4, width: '100%' }}>
+                        <TextField 
+                            value={text} 
+                            onChange={(e) => setText(e.target.value)} 
+                            label="Enter text" 
+                            fullWidth 
+                            multiline 
+                            rows={4} 
+                            variant="outlined" 
                             sx={{ mb: 2 }}
                         />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={saveFlashcards}
+                        <Button 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={handleSubmit} 
                             fullWidth
                         >
-                            Save
+                            Submit
+                        </Button>
+                    </Paper>
+                </Box>
+
+                {/* Flashcards Preview Section */}
+                {flashcards.length > 0 && (
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="h5" component="h2" gutterBottom>
+                            Flashcards Review
+                        </Typography>
+                        <Grid container spacing={3}>
+                            {flashcards.map((flashcard, index) => (
+                                <Grid item xs={12} sm={6} md={4} key={index}>
+                                    <Card>
+                                        <CardActionArea onClick={() => handleCardClick(index)}>
+                                            <CardContent>
+                                                <Box 
+                                                    sx={{
+                                                        perspective: '1000px',
+                                                        '& > div': {
+                                                            transition: 'transform 0.6s',
+                                                            transformStyle: 'preserve-3d',
+                                                            position: 'relative',
+                                                            width: '100%',
+                                                            height: '200px',
+                                                            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+                                                            transform: flipped[index] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                                                        },
+                                                        '& > div > div': {
+                                                            position: 'absolute',
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            backfaceVisibility: 'hidden',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            padding: 2,
+                                                            boxSizing: 'border-box'
+                                                        },
+                                                        '& > div > div:nth-of-type(2)': {
+                                                            transform: 'rotateY(180deg)',
+                                                        },
+                                                    }}
+                                                >
+                                                    <div>
+                                                        <div>
+                                                            <Typography variant="h5" component="div">
+                                                                {flashcard.front}
+                                                            </Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography variant="h5" component="div">
+                                                                {flashcard.back}
+                                                            </Typography>
+                                                        </div>
+                                                    </div>
+                                                </Box>
+                                            </CardContent>
+                                        </CardActionArea>
+                                    </Card>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleOpen}
+                            sx={{ mt: 3 }}
+                            fullWidth
+                        >
+                            Add to Firebase
                         </Button>
                     </Box>
-                </Fade>
-            </Modal>
-        </Container>
+                )}
+
+                {/* Modal for Saving Flashcards */}
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Box 
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 400,
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 4,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <Typography variant="h6" component="h2" gutterBottom>
+                                Save Flashcards to Firebase
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                label="Enter collection name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                sx={{ mb: 2 }}
+                            />
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={saveFlashcards}
+                                fullWidth
+                            >
+                                Save
+                            </Button>
+                        </Box>
+                    </Fade>
+                </Modal>
+            </Container>
+        </div>
     )
 }

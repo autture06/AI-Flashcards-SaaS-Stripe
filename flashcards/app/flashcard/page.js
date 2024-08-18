@@ -3,8 +3,10 @@ import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { collection, doc, getDocs } from "firebase/firestore"
 import db from "../../firebase"
-import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box } from '@mui/material'
+import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box, AppBar, Toolbar, Button } from '@mui/material'
 import { useSearchParams } from 'next/navigation'
+import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
+import Link from 'next/link';
 
 export default function Flashcard() {
     const { isLoaded, isSignedIn, user } = useUser()
@@ -43,60 +45,86 @@ export default function Flashcard() {
     }
 
     return (
-        <Container maxWidth="md">
-            <Grid container spacing={3} sx={{ mt: 4 }}>
-                {flashcards.map((flashcard) => (
-                    <Grid item xs={12} sm={6} md={4} key={flashcard.id}>
-                        <Card>
-                            <CardActionArea onClick={() => handleCardClick(flashcard.id)}>
-                                <CardContent>
-                                    <Box
-                                        sx={{
-                                            perspective: '1000px',
-                                            '& > div': {
-                                                transition: 'transform 0.6s',
-                                                transformStyle: 'preserve-3d',
-                                                position: 'relative',
-                                                width: '100%',
-                                                height: '200px',
-                                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                                transform: flipped[flashcard.id] ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                                            },
-                                            '& > div > div': {
-                                                position: 'absolute',
-                                                width: '100%',
-                                                height: '100%',
-                                                backfaceVisibility: 'hidden',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                padding: 2,
-                                                boxSizing: 'border-box',
-                                            },
-                                            '& > div > div:nth-of-type(2)': {
-                                                transform: 'rotateY(180deg)',
-                                            },
-                                        }}
-                                    >
-                                        <div>
+        <div>
+            {/* Navbar */}
+            <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
+                <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
+                    FlashMaster
+                </Typography>
+                <SignedOut>
+                    <Link href="/sign-in" passHref>
+                    <Button sx={{ color: 'white' }}>
+                        Login
+                    </Button>
+                    </Link>
+                    <Link href="/sign-up" passHref>
+                    <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
+                        Sign Up
+                    </Button>
+                    </Link>
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
+                </Toolbar>
+            </AppBar>
+
+            <Container maxWidth="md">
+                <Grid container spacing={3} sx={{ mt: 4 }}>
+                    {flashcards.map((flashcard) => (
+                        <Grid item xs={12} sm={6} md={4} key={flashcard.id}>
+                            <Card>
+                                <CardActionArea onClick={() => handleCardClick(flashcard.id)}>
+                                    <CardContent>
+                                        <Box
+                                            sx={{
+                                                perspective: '1000px',
+                                                '& > div': {
+                                                    transition: 'transform 0.6s',
+                                                    transformStyle: 'preserve-3d',
+                                                    position: 'relative',
+                                                    width: '100%',
+                                                    height: '200px',
+                                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                                    transform: flipped[flashcard.id] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                                                },
+                                                '& > div > div': {
+                                                    position: 'absolute',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    backfaceVisibility: 'hidden',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    padding: 2,
+                                                    boxSizing: 'border-box',
+                                                },
+                                                '& > div > div:nth-of-type(2)': {
+                                                    transform: 'rotateY(180deg)',
+                                                },
+                                            }}
+                                        >
                                             <div>
-                                                <Typography variant="h5" component="div">
-                                                    {flashcard.front}
-                                                </Typography>
+                                                <div>
+                                                    <Typography variant="h5" component="div">
+                                                        {flashcard.front}
+                                                    </Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography variant="h5" component="div">
+                                                        {flashcard.back}
+                                                    </Typography>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <Typography variant="h5" component="div">
-                                                    {flashcard.back}
-                                                </Typography>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </Container>
+                                        </Box>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
+        </div>
     )
 }
