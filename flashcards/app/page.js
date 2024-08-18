@@ -1,9 +1,10 @@
-import Image from "next/image";
+"use client";
+
 import * as React from "react";
 import Head from "next/head";
 import { AppBar, Toolbar, Typography, Button, Container, Box, Grid, Card, CardContent, CardActions } from '@mui/material';
 import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Home = () => {
   {/*
@@ -134,34 +135,108 @@ const Home = () => {
   );  
   */}
 
+  
+  const router = useRouter();
  
   return (
     <div>
+      <Head>
+        <title>FlashMaster</title>
+        <meta name="description" content="Create flashcards from your text" />
+      </Head>
+
       {/* Navbar */}
       <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
-            FlashMaster
-          </Typography>
-          <SignedOut>
-            <Link href="/sign-in" passHref>
-              <Button sx={{ color: 'white' }}>
+          {/* Left section with FlashMaster text and links */}
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            {/* FlashMaster text with hover effect */}
+            
+            <Box display='flex' flexDirection='column' sx={{ position: 'relative', alignItems: 'center' }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  color: 'white',
+                  mx: 1,
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  transition: 'transform 0.2s',
+                  '&:hover': { 
+                    textDecoration: 'none', 
+                    transform: 'scale(1.1)',
+                  }
+                }}
+                onClick={() => router.push('/')}
+              >
+                FlashMaster
+              </Typography>
+              <SignedIn>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        bottom: '-17px',
+                        width: 0,
+                        height: 0,
+                        borderLeft: '10px solid transparent',
+                        borderRight: '10px solid transparent',
+                        borderBottom: '10px solid white',
+                        transform: 'translateX(-50%)',
+                        left: '50%',
+                    }}
+                />
+              </SignedIn>
+            </Box>
+
+            {/* SignedIn section with Generate and Flashcards */}
+            <SignedIn sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="h8"
+                sx={{
+                  color: 'lightgrey',
+                  mx: 1,
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  '&:hover': { textDecoration: 'none', color: 'white' }
+                }}
+                onClick={() => router.push('/generate')}
+              >
+                Generate
+              </Typography>
+              <Typography
+                variant="h8"
+                sx={{
+                  color: 'lightgrey',
+                  mx: 1,
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  '&:hover': { textDecoration: 'none', color: 'white' }
+                }}
+                onClick={() => router.push('/flashcards')}
+              >
+                Flashcards
+              </Typography>
+            </SignedIn>
+          </Box>
+
+          {/* Right section with user icon and signed out links */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* SignedOut section */}
+            <SignedOut>
+              <Button sx={{ color: 'white' }} onClick={() => router.push('/sign-in')}>
                 Login
               </Button>
-            </Link>
-            <Link href="/sign-up" passHref>
-              <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
+              <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }} onClick={() => router.push('/sign-up')}>
                 Sign Up
               </Button>
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+            </SignedOut>
+
+            {/* UserButton aligned to the right */}
+            <SignedIn>
+              <UserButton sx={{ ml: 3 }} />
+            </SignedIn>
+          </Box>
         </Toolbar>
       </AppBar>
-
-
 
       {/* Hero Section */}
       <Box
@@ -193,7 +268,7 @@ const Home = () => {
       </Box>
 
       {/* Features Section */}
-      <Container sx={{ mt: 10}}>
+      <Container sx={{ mt: 10 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Why Choose FlashMaster?
         </Typography>
@@ -294,5 +369,4 @@ const Home = () => {
   );
 }
 
-
-export default Home
+export default Home;

@@ -49,24 +49,65 @@ export default function Flashcard() {
             {/* Navbar */}
             <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
                 <Toolbar>
-                <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
+                {/* Left section with FlashMaster text and links */}
+                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                    {/* FlashMaster text with hover effect */}
+                    <Typography
+                    variant="h5"
+                    sx={{
+                        color: 'white',
+                        mx: 1,
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        transition: 'transform 0.2s',
+                        '&:hover': { 
+                        textDecoration: 'none', 
+                        transform: 'scale(1.1)',
+                        }
+                    }}
+                    onClick={() => router.push('/')}
+                    >
                     FlashMaster
-                </Typography>
-                <SignedOut>
-                    <Link href="/sign-in" passHref>
-                    <Button sx={{ color: 'white' }}>
-                        Login
-                    </Button>
-                    </Link>
-                    <Link href="/sign-up" passHref>
-                    <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
-                        Sign Up
-                    </Button>
-                    </Link>
-                </SignedOut>
-                <SignedIn>
-                    <UserButton />
-                </SignedIn>
+                    </Typography>
+
+                    {/* SignedIn section with Generate and Flashcards */}
+                    <SignedIn sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography
+                        variant="h8"
+                        sx={{
+                        color: 'lightgrey',
+                        mx: 1,
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        '&:hover': { textDecoration: 'none', color: 'white' }
+                        }}
+                        onClick={() => router.push('/generate')}
+                    >
+                        Generate
+                    </Typography>
+                    <Typography
+                        variant="h8"
+                        sx={{
+                        color: 'lightgrey',
+                        mx: 1,
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        '&:hover': { textDecoration: 'none', color: 'white' }
+                        }}
+                        onClick={() => router.push('/flashcards')}
+                    >
+                        Flashcards
+                    </Typography>
+                    </SignedIn>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+                    {/* UserButton aligned to the right */}
+                    <SignedIn>
+                    <UserButton sx={{ ml: 3 }} />
+                    </SignedIn>
+                </Box>
                 </Toolbar>
             </AppBar>
 

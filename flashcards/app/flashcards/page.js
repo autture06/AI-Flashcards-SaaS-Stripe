@@ -3,10 +3,9 @@ import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { collection, doc, getDoc, setDoc } from "firebase/firestore"
 import db from "../../firebase"
-import { Container, Grid, Card, CardActionArea, CardContent, Typography, AppBar, Toolbar, Button } from '@mui/material'
+import { Container, Grid, Card, CardActionArea, CardContent, Typography, AppBar, Toolbar, Box } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
-import Link from 'next/link';
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 export default function Flashcard() {
     const {isLoaded, isSignedIn, user} = useUser()
@@ -47,27 +46,83 @@ export default function Flashcard() {
             {/* Navbar */}
             <AppBar position="static" sx={{ bgcolor: 'primary' }} elevation={0}>
                 <Toolbar>
-                <Typography variant="h6" sx={{ flexGrow: 1, color: 'white' }}>
+                {/* Left section with FlashMaster text and links */}
+                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                    {/* FlashMaster text with hover effect */}
+                    <Typography
+                    variant="h5"
+                    sx={{
+                        color: 'white',
+                        mx: 1,
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        transition: 'transform 0.2s',
+                        '&:hover': { 
+                        textDecoration: 'none', 
+                        transform: 'scale(1.1)',
+                        }
+                    }}
+                    onClick={() => router.push('/')}
+                    >
                     FlashMaster
-                </Typography>
-                <SignedOut>
-                    <Link href="/sign-in" passHref>
-                    <Button sx={{ color: 'white' }}>
-                        Login
-                    </Button>
-                    </Link>
-                    <Link href="/sign-up" passHref>
-                    <Button variant="outlined" sx={{ ml: 2, color: 'white', borderColor: 'white' }}>
-                        Sign Up
-                    </Button>
-                    </Link>
-                </SignedOut>
-                <SignedIn>
-                    <UserButton />
-                </SignedIn>
+                    </Typography>
+
+                    {/* SignedIn section with Generate and Flashcards */}
+                    <SignedIn sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                            variant="h8"
+                            sx={{
+                            color: 'lightgrey',
+                            mx: 1,
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            '&:hover': { textDecoration: 'none', color: 'white' }
+                            }}
+                            onClick={() => router.push('/generate')}
+                        >
+                            Generate
+                        </Typography>
+                        <Box display='flex' flexDirection='column' sx={{ position: 'relative', alignItems: 'center' }}>
+                            <Typography
+                                variant="h8"
+                                sx={{
+                                color: 'lightgrey',
+                                mx: 1,
+                                cursor: 'pointer',
+                                textDecoration: 'none',
+                                '&:hover': { textDecoration: 'none', color: 'white' }
+                                }}
+                                onClick={() => router.push('/flashcards')}
+                            >
+                                Flashcards
+                            </Typography>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    bottom: '-23px',
+                                    width: 0,
+                                    height: 0,
+                                    borderLeft: '10px solid transparent',
+                                    borderRight: '10px solid transparent',
+                                    borderBottom: '10px solid white',
+                                    transform: 'translateX(-50%)',
+                                    left: '50%',
+                                }}
+                            />
+                        </Box>
+                    </SignedIn>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+                    {/* UserButton aligned to the right */}
+                    <SignedIn>
+                    <UserButton sx={{ ml: 3 }} />
+                    </SignedIn>
+                </Box>
                 </Toolbar>
             </AppBar>
-            
+
             <Container maxWidth="md">
                 <Grid container spacing={3} sx={{mt: 4}}>
                     {flashcards.map((flashcard, index) => (
