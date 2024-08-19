@@ -5,7 +5,7 @@ import Head from "next/head";
 import { AppBar, Toolbar, Typography, Button, Container, Box, Grid, Card, CardContent, CardActions } from '@mui/material';
 import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
-import getStripe from "@/utils/get-stripe";
+import getStripe from "../utils/get-stripe";
 
 const Home = () => {
   {/*
